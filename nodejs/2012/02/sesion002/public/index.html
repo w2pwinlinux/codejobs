@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>API index</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <section>
+      <h1>Taller #NodeJs + #MongoDB</h1>
+      <h3>@codejobs | @silvercorp</h3>
+
+      <form id="form" method="POST" action="api/followers">
+          <div align="center">
+            <p>Name: <input type="text" name="name" id="name"></p>
+            <p>Last: name: <input type="text" name="last" id="last"></p>
+            <p>Age: <input type="text" name="age" id="age"></p>
+            <p>Twitter @<input type="text" name="twitter" id="twitter"></p>
+            <input type="submit" value="Send">            
+          </div>          
+      </form>
+
+       <p>Twitter: <input type="text" name="twitter_account" id="twitter_account">
+          <b><span name="search" id="search">Search</span></b>
+       </p>
+       
+      <br/><br/>
+      <p><a href="api/followers">List Followers (json)</a></p>
+      <div id="followers">View followers</div>
+
+      <p id="result" name="result"></p>
+
+      <h4>Update</h4>
+      
+          <div align="center">
+            <p>ID: <input type="text" name="id" id="id"></p>
+            <p>Name: <input type="text" name="namef" id="namef"></p>
+            <p>Last: name: <input type="text" name="lastf" id="lastf"></p>
+            <p>Age: <input type="text" name="agef" id="agef"></p>
+            <p>Twitter @<input type="text" name="twitterf" id="twitterf"></p>
+            <p id="update" name="update">Update</p>
+          </div>
+
+      <h4>Delete</h4>    
+        <div align="center">
+            <p>ID: <input type="text" name="id_delete" id="id_delete"></p>
+            <p id="delete" name="delete">Delete</p>
+          </div>
+
+
+      <script>        
+        $("#followers").click(function() {
+          $.getJSON('api/followers', function(data) {
+            var items = [];
+              $.each(data, function(key, val) {            
+              items.push('<li id="' + key + '">["'+val._id+'"]Full name: '+val.name+" "+val.last+' Edad: '+ val.age + ' @'+val.twitter+'</li>');
+            });
+            $('<ul/>', {
+              'class': 'mylist',
+               html: items.join('')
+            }).appendTo('body');
+          });
+        });
+
+        $("#search").click(function() {
+          jQuery.get("/api/followers/"+$("#twitter_account").val(), function(data, textStatus, jqXHR) { 
+            var result = data.name + " "+data.last + " | @"+data.twitter;
+            $('#result').text(result);
+            
+          });
+          });
+
+        $("#update").click(function() {
+            jQuery.ajax({
+              url: "/api/followers/"+$("#id").val(), 
+              type: "PUT",
+              data: {
+                "name": $("#namef").val(),  
+                "last": $("#lastf").val(),  
+                "twitter": $("#twitterf").val(),  
+                "age": $("#agef").val(),  
+      
+              }, 
+                success: function(data, textStatus, jqXHR) { 
+                  alert("Update");
+              }
+            });
+        });
+
+        $("#delete").click(function() {
+            jQuery.ajax({
+              url: "/api/followers/"+$("#id_delete").val(), 
+              type: "DELETE",
+               success: function(data) { 
+                  alert("Delete");
+              }
+            });
+        });
+      </script>
+      
+
+    </section>
+    
+  </body>
+</html>
